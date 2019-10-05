@@ -2,14 +2,21 @@
 
 # How to Avoid Observables in Angular
 
+Angular, RxJS, observable
+
 Angular is an object-oriented framework. 
-Even if there are a lot of things imperative some services and therefore also some third party libs, are reactive. 
+Even if there are a lot of things imperative some services, and therefore also some third party libs, are reactive. 
 This is great because it provides both approaches in one framework, which is at the moment a more or less unique thing.
 
 As reactive programming is hard for an imperative thinking mind, many people try to avoid reactive programming.
-This article will help you to understand how to avoid it and why it is even here at all.
+
+This article will help you to understand how to avoid it and in addition we will learn why it is even here at all.
+
+---
 
 ![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-observables-intro_michael-hladky.png "How to Avoid Observables in Angular - Intro")
+
+## Table of Content
 
 <!-- toc -->
 
@@ -25,6 +32,8 @@ This article will help you to understand how to avoid it and why it is even here
 - [Summary](#summary)
 
 <!-- tocstop -->
+
+---
 
 If you **DON'T** want to use a reactive approach in your component you 
 should subscribe as soon as possible to the stream you want to get rid of and do the following things:
@@ -341,7 +350,8 @@ In recent times 2 people presented something that I call "binding an observable 
 Both of them created a HOC in a different way.
 
 [@MikeRyanDev](https://twitter.com/MikeRyanDev) presented the "ReactiveComponent" and its "connect" method in his presentation [Building with Ivy: rethinking reactive Angular](https://youtu.be/rz-rcaGXhGk?t=859)  
-and [@EliranEliassy](https://twitter.com/EliranEliassy) presented the "@Unsubscriber" decorator in his presentation [Everything you need to know about Ivy](https://youtu.be/AKibI36WNhY?t=2117)
+
+[@EliranEliassy](https://twitter.com/EliranEliassy) presented the "@Unsubscriber" decorator in his presentation [Everything you need to know about Ivy](https://youtu.be/AKibI36WNhY?t=2117)
 
 HOC is an acronym and stands for **H**igher **O**rder **C**omponents. 
 
@@ -591,4 +601,4 @@ Condensed there are 2 main learning:
 - The **2 biggest benefits** of reactive programming are **a unified API** and **functional composition** 
 - The **2 biggest constraints** of reactive programming are **a lot of headaches** and a **steep learning curve**
 
-You can find the source-code of the examples as well as all resources on [github](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular)
+You can find the source code of the examples as well as all resources on [github](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular)
