@@ -1,6 +1,6 @@
-# How to Avoid Observables in Angular
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/cover-how-to-avoid-observables-in-angular_michael-hladky.png "How to Avoid Observables in Angular - Cover")
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-observables-cover.png "How to Avoid Observables in Angular - Cover")
+# How to Avoid Observables in Angular
 
 Angular is an object-oriented framework. 
 Even if there are a lot of things imperative some services and therefore also some third party libs, are reactive. 
@@ -9,12 +9,14 @@ This is great because it provides both approaches in one framework, which is at 
 As reactive programming is hard for an imperative thinking mind, many people try to avoid reactive programming.
 This article will help you to understand how to avoid it and why it is even here at all.
 
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-observables-intro_michael-hladky.png "How to Avoid Observables in Angular - Intro")
+
 <!-- toc -->
 
 - [Comparing Basic Usecases](#comparing-basic-usecases)
-  * [Retrieving data over HTTP](#retrieving-data-over-http)
-  * [Retrieving values provided by Angular](#retrieving-values-provided-by-angular)
-  * [Retrieving values provided by third parties](#retrieving-values-provided-by-third-parties)
+  * [Retrieving values from cold observables](#retrieving-values-from-cold-observables)
+  * [Retrieving values from hot observables provided by Angular](#retrieving-values-from-hot-observables-provided-by-angular)
+  * [Retrieving values from hot observables provided by third parties](#retrieving-values-from-hot-observables-provided-by-third-parties)
 - [Patterns to avoid observables](#patterns-to-avoid-observables)
   * [Where to subscribe](#where-to-subscribe)
   * [Make it even easier](#make-it-even-easier)
@@ -47,7 +49,7 @@ And see the reactive and imperative approach in comparison.
 Let's solve a very primitive example first. 
 Retrieving data over HTTP and render it.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex1-http.png "Retrieving values from cold observables")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex1-http_michael-hladky.png "Retrieving values from cold observables")
 
 
 We start with the reactive approach and then try to convert it into an imperative approach.
@@ -123,7 +125,7 @@ Next, let's use a hot observable provided by angular the router params.
 
 Retrieving the route params, plucking out a single key and displaying its value in the view.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex2-router-params.png "Retrieving values from hot observables provided by Angular")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex2-router-params_michael-hladky.png "Retrieving values from hot observables provided by Angular")
 
 Again we start with the reactive approach first.
 
@@ -202,7 +204,7 @@ For this example, I will use the `@ngrx/store` library and it's `Store` service.
 
 Retrieving state from the store and display its value in the view.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex3-store.png "Retrieving values from hot observables provided by third parties")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex3-store_michael-hladky.png "Retrieving values from hot observables provided by third parties")
 
 **Leveraging Reactive Programming [demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex3-rx)** 
 ```typescript
@@ -310,7 +312,7 @@ It's the moment we start to mutate the properties of a component in an imperativ
 So the worst thing you could do to avoid reactive programming is to use the `async` pipe.
 Let me give you a quick illustration of this learning:
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-leverage-observables.png "Avoid Reactive Programming")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-leverage-observables_michael-hladky.png "Avoid Reactive Programming")
 
 So now we know the following: 
 - If we want to **avoid** reactive programming we have to 
@@ -323,7 +325,7 @@ Until now I saw plenty of them and It was always a mess.
 
 So as a suggestion from my side tries to avoid mixing stales as good as possible.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/mix-styles.png "Mixing Styles")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/mix-styles_michael-hladky.png "Mixing Styles")
 
 
 ### Make it even easier
@@ -435,7 +437,7 @@ In this section, we will compose values from the `Store` with results from HTTP 
 As we want to avoid broken UI state we have to handle race-conditions. 
 Also if the component gets destroyed while a request is pending we don't process the result anymore. 
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex4-store-and-http.png "Comparing composition")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex4-store-and-http_michael-hladky.png "Comparing composition")
 
 **Leveraging Reactive Programming [demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-rx)** 
 ```typescript
@@ -589,4 +591,4 @@ Condensed there are 2 main learning:
 - The **2 biggest benefits** of reactive programming are **a unified API** and **functional composition** 
 - The **2 biggest constraints** of reactive programming are **a lot of headaches** and a **steep learning curve**
 
-You can find the source-code of the examples as well as all resources on [github](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular) 
+You can find the source-code of the examples as well as all resources on [github](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular)
