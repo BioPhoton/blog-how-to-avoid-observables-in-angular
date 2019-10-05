@@ -336,18 +336,72 @@ As this is annoying or even tricky, if we forget to unsubscribe, we could create
 We could... But let's first look at some solutions out there.
 
 In recent times 2 people presented something that I call "binding an observable to a property", for angular components.
+Both of them created a HOC in a different way.
 
-[@MikeRyanDev](https://twitter.com/MikeRyanDev) presented the "connect" method in his presentation [Building with Ivy: rethinking reactive Angular](https://www.youtube.com/watch?v=rz-rcaGXhGk)  
-and [@EliranEliassy](https://twitter.com/EliranEliassy) presented the "unsubscriber HOC" in his presentation [Everything you need to know about Ivy](https://www.youtube.com/watch?v=AKibI36WNhY)
+[@MikeRyanDev](https://twitter.com/MikeRyanDev) presented the "ReactiveComponent" and its "connect" method in his presentation [Building with Ivy: rethinking reactive Angular](https://youtu.be/rz-rcaGXhGk?t=859)  
+and [@EliranEliassy](https://twitter.com/EliranEliassy) presented the "@Unsubscriber" decorator in his presentation [Everything you need to know about Ivy](https://youtu.be/AKibI36WNhY?t=2117)
+
+HOC is an acronym and stands for **H**igher **O**rder **C**omponents. 
 
 Both of them eliminate the need to assign incoming values to a component property as well as manage the subscription.
 The great thing about it is we can solve our problem with a one-liner and can switch to imperative programming without having any trouble.
 
+Those functionality could be implemented in various way.
+
+Mike Ryan used inheritance. 
+A concept form object oriented programming that looks something like this:
+
+```typescript
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { ReactiveComponent } from 'reactive.component.ts';
+@Component({
+  selector: 'example3-im',
+  template: `
+  <h2>Example3 - Avoid Reactive Programming</h2>
+  Store value {{page}}
+  `
+})
+export class Example3ImComponent extends ReactiveComponent  {
+  page = this.connect({page: this.store.select(s => s.page)});
+
+  constructor(private store: Store<any>) {
+  }
+}
+```
+
+Eliran Eliassy used Class level decorators to accomplish it.
+A concept form functional programming that looks something like this:
+
+```typescript
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Unsubscriber } from 'unsubscriber.decorator.ts';
+
+@Unsubscriber()
+@Component({
+  selector: 'example3-im',
+  template: `
+  <h2>Example3 - Avoid Reactive Programming</h2>
+  Store value {{page}}
+  `
+})
+export class Example3ImComponent  {
+  page; 
+  subscription = this.store.select(s => s.page)
+    .subscribe(page => this.page = page);
+
+  constructor(private store: Store<any>) {
+  }
+}
+```
+
 As both versions are written for `Ivy` I can inform you that there are also several other libs out there for `ViewEngine`.
+There is i.e. [ngx-take-until-destroy](https://www.npmjs.com/package/ngx-take-until-destroy) and [ngx-auto-unsubscribe](https://www.npmjs.com/package/ngx-auto-unsubscribe) from [@NetanelBasal](https://twitter.com/NetanelBasal)
 
 With this information, we could stop here and start avoiding reactive programming like a pro. ;)
 
-But let's have the last section to give a bit reason for reactive programming.
+But lets have a last section to give a bit reason for reactive programming.
 
 ## The reason for reactive programming
 
