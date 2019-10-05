@@ -63,7 +63,7 @@ Retrieving data over HTTP and render it.
 
 We start with the reactive approach and then try to convert it into an imperative approach.
 
-**Leveraging Reactive Programming ([demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex1-rx))** 
+**Leveraging Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex1-rx))** 
 ```typescript
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -96,7 +96,7 @@ On the next change detection run, we will see the latest emitted value in the vi
 
 As observables from `HttpClient` are cold and they complete after the first emission we don't care about subscription handling here.
 
-**Avoid Reactive Programming ([demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex1-im))** 
+**Avoid Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex1-im))** 
 ```typescript
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -138,7 +138,7 @@ Retrieving the route params, plucking out a single key and displaying its value 
 
 Again we start with the reactive approach first.
 
-**Leveraging Reactive Programming ([demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex2-rx))** 
+**Leveraging Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex2-rx))** 
 ```typescript
 import { Component} from '@angular/core';
 import { ActivatedRoute} from '@angular/router';
@@ -173,9 +173,9 @@ On the next change detection run, we will see the latest emitted value in the vi
 
 If the component gets destroyed,
 the subscription that got set up in the `async` pipe before the first run of `AfterContentChecked` 
-gets destroyed on the pipes `ngOnDestroy` [hook](https://github.com/angular/angular/blob/0119f46daf8f1efda00f723c5e329b0c8566fe07/packages/common/src/pipes/async_pipe.ts#L83).
+gets destroyed on the pipes `ngOnDestroy` [💾 hook](https://github.com/angular/angular/blob/0119f46daf8f1efda00f723c5e329b0c8566fe07/packages/common/src/pipes/async_pipe.ts#L83).
 
-**Avoiding Reactive Programming ([demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex2-im;page=0))** 
+**Avoiding Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex2-im;page=0))** 
 ```typescript
 import { Component} from '@angular/core';
 import { ActivatedRoute} from '@angular/router';
@@ -215,7 +215,7 @@ Retrieving state from the store and display its value in the view.
 
 ![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex3-store_michael-hladky.png "Retrieving values from hot observables provided by third parties")
 
-**Leveraging Reactive Programming ([demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex3-rx))** 
+**Leveraging Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex3-rx))** 
 ```typescript
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -249,7 +249,7 @@ On the next change detection run, we will see the latest emitted value in the vi
 
 If the component gets destroyed angular manages the subscription over the `async` pipe.
 
-**Avoiding Reactive Programming  ([demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex3-im))** 
+**Avoiding Reactive Programming  ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex3-im))** 
 ```typescript
 import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -347,43 +347,20 @@ As this is annoying or even tricky, if we forget to unsubscribe, we could create
 We could... But let's first look at some solutions out there.
 
 In recent times 2 people presented something that I call "binding an observable to a property", for angular components.
-Both of them created a HOC differently.
-
-[@MikeRyanDev](https://twitter.com/MikeRyanDev) presented the "ReactiveComponent" and its "connect" method in his presentation [Building with Ivy: rethinking reactive Angular](https://youtu.be/rz-rcaGXhGk?t=859)  
-
-[@EliranEliassy](https://twitter.com/EliranEliassy) presented the "@Unsubscriber" decorator in his presentation [Everything you need to know about Ivy](https://youtu.be/AKibI36WNhY?t=2117)
-
+Both of them created a HOC differently.  
 HOC is an acronym and stands for **H**igher **O**rder **C**omponents. 
+
+[@EliranEliassy](https://twitter.com/EliranEliassy) presented the "@Unsubscriber" decorator in his presentation [📼 Everything you need to know about Ivy](https://youtu.be/AKibI36WNhY?t=2117)
+
+[@MikeRyanDev](https://twitter.com/MikeRyanDev) presented the "ReactiveComponent" and its "connect" method in his presentation [📼 Building with Ivy: rethinking reactive Angular](https://youtu.be/rz-rcaGXhGk?t=859)  
 
 Both of them eliminate the need to assign incoming values to a component property as well as manage the subscription.
 The great thing about it is we can solve our problem with a one-liner and can switch to imperative programming without having any trouble.
 
 That functionality could be implemented in various ways.
 
-Mike Ryan used inheritance. 
-A concept form object oriented programming that looks something like this:
-
-```typescript
-import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { ReactiveComponent } from 'reactive.component.ts';
-@Component({
-  selector: 'example3-im',
-  template: `
-  <h2>Example3 - Avoid Reactive Programming</h2>
-  Store value {{page}}
-  `
-})
-export class Example3ImComponent extends ReactiveComponent  {
-  page = this.connect({page: this.store.select(s => s.page)});
-
-  constructor(private store: Store<any>) {
-  }
-}
-```
-
 Eliran Eliassy used Class level decorators to accomplish it.
-A concept form functional programming that looks something like this:
+He uses a concept form functional programming, a closure function, that looks something like this:
 
 ```typescript
 import { Component } from '@angular/core';
@@ -408,9 +385,35 @@ export class Example3ImComponent  {
 }
 ```
 
+
+Mike Ryan used inheritance. In addition to Elirans example here the subscription call is also invisible.
+This is the cleanest solution I have found so far.
+
+He used a concept form object oriented programming, inheritance, that looks something like this:
+
+```typescript
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { ReactiveComponent } from 'reactive.component.ts';
+@Component({
+  selector: 'example3-im',
+  template: `
+  <h2>Example3 - Avoid Reactive Programming</h2>
+  Store value {{page}}
+  `
+})
+export class Example3ImComponent extends ReactiveComponent  {
+  page = this.connect({page: this.store.select(s => s.page)});
+
+  constructor(private store: Store<any>) {
+  }
+}
+```
+
+
 As both versions are written for `Ivy` I can inform you that there are also several other libs out there for `ViewEngine`.
 
-There is i.e. [ngx-take-until-destroy](https://www.npmjs.com/package/ngx-take-until-destroy) and [ngx-auto-unsubscribe](https://www.npmjs.com/package/ngx-auto-unsubscribe) from [@NetanelBasal](https://twitter.com/NetanelBasal)
+There is i.e. [📦 ngx-take-until-destroy](https://www.npmjs.com/package/ngx-take-until-destroy) and [📦 ngx-auto-unsubscribe](https://www.npmjs.com/package/ngx-auto-unsubscribe) from [@NetanelBasal](https://twitter.com/NetanelBasal)
 
 ---
 
@@ -452,7 +455,7 @@ Also if the component gets destroyed while a request is pending we don't process
 
 ![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex4-store-and-http_michael-hladky.png "Comparing composition")
 
-**Leveraging Reactive Programming ([demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-rx))** 
+**Leveraging Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-rx))** 
 ```typescript
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -498,7 +501,7 @@ On the next change detection run, we will see the latest emitted value in the te
 
 If the component gets destroyed angular manages the subscription over the `async` pipe.
 
-**Avoiding Reactive Programming ([demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im))** 
+**Avoiding Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im))** 
 ```typescript
 import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -576,7 +579,7 @@ Not using it.
 
 Not using it and implementing the scenario without another **big benefit** of observables, **a unified API**. 
 
-If we compare 
+If we compare: 
 
 the reactive approach with the following different APIs: 
 - `subscribe` and `unsubscribe`
@@ -600,14 +603,29 @@ What we learned about Reactive programming and observables is:
 - JavaScript's APIs for asynchronous operations is inconsistent (lots of lines of code)
 - Imperative code gets complex with asynchronous operations (lots of how instructions)
 
-Condensed there are 2 main learning:
+**Condensed there are 2 main learning:**
 - The **2 biggest benefits** of reactive programming are **a unified API** and **functional composition** 
 - The **2 biggest constraints** of reactive programming are **a lot of headaches** and a **steep learning curve**
 
-**Resources**
-You can find the source code of the examples as well as all resources on [github](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular)
+---
 
-- [ReactiveComponent](https://github.com/MikeRyanDev/rethinking-reactivity-angularconnect2019)
-- [@Unsubscriber" Decorator](https://github.com/eliraneliassy/bye-bye-ngmodules/blob/master/src/app/counter/counter.component.ts)
-- [ngx-take-until-destroy](https://github.com/ngneat/until-destroy) 
-- [ngx-auto-unsubscribe](https://github.com/NetanelBasal/ngx-auto-unsubscribe)
+**Resources**  
+You can find the source code of the examples   
+as well as all resources in the repository [How to Avoid Observables in Angular](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular) on github.
+
+For Ivy (Angular >= 9):
+
+[@EliranEliassy](https://twitter.com/EliranEliassy)
+- [📼 Everything you need to know about Ivy](https://youtu.be/AKibI36WNhY?t=2117)
+- [💾 @Unsubscriber Decorator](https://github.com/eliraneliassy/bye-bye-ngmodules/blob/master/src/app/timer-example/unsubsribce.hoc.ts)  
+
+[@MikeRyanDev](https://twitter.com/MikeRyanDev)
+- [📼 Building with Ivy: rethinking reactive Angular](https://youtu.be/rz-rcaGXhGk?t=859)  
+- [💾 ReactiveComponent](https://github.com/MikeRyanDev/rethinking-reactivity-angularconnect2019)
+
+For ViewEngine (Angular <= 8):
+
+[@NetanelBasal](https://twitter.com/NetanelBasal)
+- [📦 ngx-take-until-destroy](https://github.com/ngneat/until-destroy) 
+- [📦 ngx-auto-unsubscribe](https://github.com/NetanelBasal/ngx-auto-unsubscribe)
+
