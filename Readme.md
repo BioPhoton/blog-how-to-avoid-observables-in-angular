@@ -535,4 +535,4 @@ Condensed there are 2 main learning:
 - The **2 biggest benefits** of reactive programming are **a unified API** and **functional composition** 
 - The **2 biggest constraints** of reactive programming are **a lot of headaches** and a **steep learning curve**
 
-You can find the source-code fromm the examples on [github]() 
+You can find the source-code of the examples as well as all resources on [github](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular) 
