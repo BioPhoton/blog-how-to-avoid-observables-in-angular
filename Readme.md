@@ -595,7 +595,7 @@ it shows us 2 things:
 
 ## Summary
 
-What we learned about Reactive programming and observables is:
+What we learned about reactive programming and observables is:
 - Avoid it by subscribing as early as possible (use helpers for easy-going)
 - Leverage it by subscribing as late as possible
 - **Don't mix it!**
