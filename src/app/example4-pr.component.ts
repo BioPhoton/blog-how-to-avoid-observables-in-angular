@@ -16,6 +16,8 @@ import {Subscription } from 'rxjs';
 export class Example4PrComponent implements OnDestroy  {
   pageSub = new Subscription();
   page;
+
+  intervalId;
   
   httpSub = new Subscription();
   names;
@@ -24,20 +26,32 @@ export class Example4PrComponent implements OnDestroy  {
     this.pageSub = this.store.select(s => s.page)
       .subscribe(page => {
         this.page = page;
-        if(!this.httpSub.closed) {
-          this.httpSub.unsubscribe();
-        }
-
-        this.httpSub = this.http
-          .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
-                .subscribe((res: any) => {
-                  this.names =  res.map(i => i.name);
-                });
+        this.updateList()
     });
+    this.intervalId = setInterval(() => {
+        this.updateList();
+    })
+  }
+
+  updateList() {
+    if(this.page === undefined) {
+      return;
+    }
+
+    if(!this.httpSub.closed) {
+      this.httpSub.unsubscribe();
+    }
+
+    this.httpSub = this.http
+      .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
+      .subscribe((res: any) => {
+        this.names =  res.map(i => i.name);
+      });
   }
 
   ngOnDestroy() {
     this.pageSub.unsubscribe();
+    clearInterval(this.intervalId);
     this.httpSub.unsubscribe();
   }
 
