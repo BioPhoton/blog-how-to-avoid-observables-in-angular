@@ -14,18 +14,17 @@ import {Subscription } from 'rxjs';
   `
 })
 export class Example4ImComponent implements OnDestroy  {
-  pageSub;
+  pageSub = new Subscription();
   page;
 
   intervalId;
   
-  httpSub;
+  httpSub= new Subscription();
   names;
 
   constructor(private store: Store<any>, private http: HttpClient) {
     this.pageSub = this.store.select(s => s.page)
       .subscribe(page => {
-        console.log('page', page);
         this.page = page;
         this.updateList()
     });
