@@ -2,24 +2,25 @@ import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import {Subscription } from 'rxjs';
+import * as axios from 'axios';
 
 @Component({
-  selector: 'example4-im',
+  selector: 'example4-pr',
   template: `
-  <h2>Example4 - Avoid Reactive Programming</h2>
+  <h2>Example4 - Use Promises</h2>
   Repositories Page [{{page}}]: 
   <ul>
   <li *ngFor="let name of names">{{name}}</li>
   </ul>
   `
 })
-export class Example4ImComponent implements OnDestroy  {
-  pageSub = new Subscription();
+export class Example4PrComponent implements OnDestroy  {
+ pageSub = new Subscription();
   page;
 
   intervalId;
   
-  httpSub= new Subscription();
+  httpSub = new Subscription();
   names;
 
   constructor(private store: Store<any>, private http: HttpClient) {
@@ -28,10 +29,10 @@ export class Example4ImComponent implements OnDestroy  {
         this.page = page;
         this.updateList()
     });
-
+    
     this.intervalId = setInterval(() => {
         this.updateList();
-    }, 10000)
+    })
   }
 
   updateList() {
@@ -42,7 +43,7 @@ export class Example4ImComponent implements OnDestroy  {
     if(!this.httpSub || !this.httpSub.closed) {
       this.httpSub.unsubscribe();
     }
-     
+
     this.httpSub = this.http
       .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
       .subscribe((res: any) => this.names =  res.map(i => i.name));
@@ -53,4 +54,5 @@ export class Example4ImComponent implements OnDestroy  {
     clearInterval(this.intervalId);
     this.httpSub.unsubscribe();
   }
+
 }

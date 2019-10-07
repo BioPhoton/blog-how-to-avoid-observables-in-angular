@@ -13,6 +13,7 @@ import { Example3RxComponent } from './example3-rx.component';
 import { Example3ImComponent } from './example3-im.component';
 import { Example4RxComponent } from './example4-rx.component';
 import { Example4ImComponent } from './example4-im.component';
+import { Example4PrComponent } from './example4-pr.component';
 
   
 export const update = createAction(
@@ -64,15 +65,19 @@ const pageReducer = (state, action) => _pageReducer(state, action);
       component: Example4ImComponent
     },
     {
+      path:'ex4-pr',
+      component: Example4PrComponent
+    },
+    {
       path:'ex4-rx',
       component: Example4RxComponent
-    },
+    }
   ]) ],
   declarations: [ AppComponent, 
   Example1ImComponent, Example1RxComponent,
   Example2ImComponent, Example2RxComponent,
   Example3ImComponent, Example3RxComponent,
-  Example4ImComponent, Example4RxComponent
+  Example4ImComponent, Example4RxComponent, Example4PrComponent
    ],
   bootstrap:    [ AppComponent ]
 })

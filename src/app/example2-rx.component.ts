@@ -10,11 +10,11 @@ import { map } from 'rxjs/operators';
   `
 })
 export class Example2RxComponent  {
-  page;
+  page = this.route.params
+      .pipe(map((params: any) => params.page));
 
   constructor(private route: ActivatedRoute) {
-    this.page = this.route.params
-      .pipe(map((params: any) => params.page));
+
   }
 
 }

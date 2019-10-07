@@ -10,11 +10,11 @@ import { map } from 'rxjs/operators';
   `
 })
 export class Example1RxComponent  {
-  result;
+  result = this.http.get('https://api.github.com/users/ReactiveX')
+      .pipe(map((user: any) => user.login));
 
   constructor(private http: HttpClient) {
-    this.result = this.http.get('https://api.github.com/users/ReactiveX')
-      .pipe(map((user: any) => user.login));
+   
   }
 
 }

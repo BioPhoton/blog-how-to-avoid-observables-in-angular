@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, switchMap } from 'rxjs/operators';
+import { merge, interval } from 'rxjs';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 @Component({
@@ -14,16 +15,16 @@ import { Store } from '@ngrx/store';
   `
 })
 export class Example4RxComponent  {
-  page;
-  names;
-  
-  constructor(private store: Store<any>, private http: HttpClient) {
-    this.page = this.store.select(s => s.page);
-    this.names = this.page
+  page = this.store.select(s => s.page);
+  names = merge(this.page, interval(10000))
       .pipe(
+        withLatestFrom(this.page, (_, page) => page),
         switchMap(page => this.http.get(`https://api.github.com/orgs/ReactiveX/repos?page=${page}&per_page=5`)),
         map(res => res.map(i => i.name))
       );
+
+  constructor(private store: Store<any>, private http: HttpClient) {
+   
   }
 
 }
