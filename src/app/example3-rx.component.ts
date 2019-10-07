@@ -10,10 +10,10 @@ import { Store } from '@ngrx/store';
   `
 })
 export class Example3RxComponent  {
-  page;
+  page = this.store.select(s => s.page);
 
   constructor(private store: Store<any>) {
-    this.page = this.store.select(s => s.page);
+
   }
 
 }

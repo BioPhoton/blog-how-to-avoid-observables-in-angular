@@ -14,31 +14,43 @@ import {Subscription } from 'rxjs';
   `
 })
 export class Example4ImComponent implements OnDestroy  {
-  pageSub = new Subscription();
+  pageSub;
   page;
+
+  intervalId;
   
-  httpSub = new Subscription();
+  httpSub;
   names;
 
   constructor(private store: Store<any>, private http: HttpClient) {
     this.pageSub = this.store.select(s => s.page)
       .subscribe(page => {
         this.page = page;
-        if(!this.httpSub.closed) {
-          this.httpSub.unsubscribe();
-        }
-
-        this.httpSub = this.http
-          .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
-                .subscribe((res: any) => {
-                  this.names =  res.map(i => i.name);
-                });
+        this.updateList()
     });
+    
+    this.intervalId = setInterval(() => {
+        this.updateList();
+    })
+  }
+
+  updateList() {
+    if(this.page === undefined) {
+      return;
+    }
+
+    if(!this.httpSub || !this.httpSub.closed) {
+      this.httpSub.unsubscribe();
+    }
+
+    this.httpSub = this.http
+      .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
+      .subscribe((res: any) => this.names =  res.map(i => i.name));
   }
 
   ngOnDestroy() {
     this.pageSub.unsubscribe();
+    clearInterval(this.intervalId);
     this.httpSub.unsubscribe();
   }
-
 }
