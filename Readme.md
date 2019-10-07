@@ -624,6 +624,7 @@ the reactive approach with the following different APIs:
 and the approach without observables with the following different APIs: 
 - `addEventListener` and `removeEventListener`
 - `new Promise` and `your custom dispose of logic`
+- `setInterval` as `clearInterval`
 
 and further, consider the **clean** implementation effort for those APIs in the race-condition scenario
 it shows us 2 things:
