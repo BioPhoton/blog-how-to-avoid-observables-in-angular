@@ -25,13 +25,14 @@ export class Example4ImComponent implements OnDestroy  {
   constructor(private store: Store<any>, private http: HttpClient) {
     this.pageSub = this.store.select(s => s.page)
       .subscribe(page => {
+        console.log('page', page);
         this.page = page;
         this.updateList()
     });
-    
+
     this.intervalId = setInterval(() => {
         this.updateList();
-    })
+    }, 10000)
   }
 
   updateList() {
@@ -42,7 +43,7 @@ export class Example4ImComponent implements OnDestroy  {
     if(!this.httpSub || !this.httpSub.closed) {
       this.httpSub.unsubscribe();
     }
-
+     
     this.httpSub = this.http
       .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
       .subscribe((res: any) => this.names =  res.map(i => i.name));

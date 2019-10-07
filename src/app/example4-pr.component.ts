@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import {Subscription } from 'rxjs';
+import * as axios from 'axios';
 
 @Component({
   selector: 'example4-pr',
@@ -14,7 +15,7 @@ import {Subscription } from 'rxjs';
   `
 })
 export class Example4PrComponent implements OnDestroy  {
-  pageSub = new Subscription();
+ pageSub = new Subscription();
   page;
 
   intervalId;
@@ -28,6 +29,7 @@ export class Example4PrComponent implements OnDestroy  {
         this.page = page;
         this.updateList()
     });
+    
     this.intervalId = setInterval(() => {
         this.updateList();
     })
@@ -38,15 +40,13 @@ export class Example4PrComponent implements OnDestroy  {
       return;
     }
 
-    if(!this.httpSub.closed) {
+    if(!this.httpSub || !this.httpSub.closed) {
       this.httpSub.unsubscribe();
     }
 
     this.httpSub = this.http
       .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
-      .subscribe((res: any) => {
-        this.names =  res.map(i => i.name);
-      });
+      .subscribe((res: any) => this.names =  res.map(i => i.name));
   }
 
   ngOnDestroy() {
