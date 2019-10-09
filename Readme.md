@@ -16,25 +16,11 @@ This article will help us to understand how to avoid it and also, we will learn 
 
 ![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-observables-intro_michael-hladky.png "How to Avoid Observables in Angular - Intro")
 
-## Glossar
-- **functional programming:** ???
-- **reactive programming:** A style of functional programming where we process incoming events like we would do with lists (JavaScript Arrays)
-- **imperative programming:** ???
-- **single-shot observable:** Like a Promise completes after the value it emitted, these observables emit a single value and then complete. 
-- **on-going observable:** like an interval fires multiple values over time these are observables that needs to get completed manually.
-- **composition:** Therm in functional programming ???
-- **closure:** Therm in functional programming ???
-- **HOC:** Acronym for **H**igher **O**rder **C**omponent
-- **inheritance**: 
-- **class-level decorators**: 
-- **broken UI state:**
-- **race-conditions:**
-
-
-## Table of Content
+# Table of Content
 
 <!-- toc -->
 
+- [Minimal Information about RxJS](#minimal-information-about-rxjs)
 - [Comparing Basic Usecases](#comparing-basic-usecases)
   * [Retrieving values from single-shot observables](#retrieving-values-from-single-shot-observables)
   * [Retrieving values from an on-going observables provided by an Angular service](#retrieving-values-from-an-on-going-observables-provided-by-an-angular-service)
@@ -42,22 +28,84 @@ This article will help us to understand how to avoid it and also, we will learn 
 - [Patterns to avoid observables](#patterns-to-avoid-observables)
   * [Where to subscribe](#where-to-subscribe)
   * [Make it even easier](#make-it-even-easier)
-- [The reason for reactive programming](#the-reason-for-reactive-programming)
-  * [Comparing composition](#comparing-composition)
-- [Let's meet halfway](#lets-meet-halfway)
+- [Why do we need in Angular at all?](#why-do-we-need-in-angular-at-all)
+  * [Comparing the 2 approaches over composition](#comparing-the-2-approaches-over-composition)
+- [My humble 5 cents](#my-humble-5-cents)
 - [Summary](#summary)
+- [Glossary](#glossary)
 
 <!-- tocstop -->
 
 ---
 
+# TL;DR
+
 If you **DON'T** want to use a reactive approach in your component you 
-should take the stream you want to get rid of, as soon as possible and do the following things:
+should take the observable you want to get rid of, as soon as possible and do the following things:
 - subscribe to a stream and assign incoming values to a component property 
 - if necessary, unsubscribe the stream as soon as the component gets destroyed 
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex1-http_michael-hladky.png "Retrieving values from cold observables")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/subscription-time-avoid-observables_michael-hladky.png "How to Avoid Observables in Angular - TL;DR")
 
+
+# Minimal Information about RxJS 
+
+> **Observables are a unified API for pull and push-based collections 
+that can be composed in a functional way**
+
+As this sentence is maybe not trivial to understand let me split it into two pieces, unified API and functional composition. 
+ 
+I'll give a bit more information to both of them and compare them with an imperative approach.
+
+**Unified API:**
+
+Think about all the different APIs in the browser for asynchronous operations: 
+- `setInterval` and `clearInterval`
+- `addEventListener` and `removeEventListener`
+- `new Promise` and [no dispose logic implemented]
+- `requestAnimationFrame` and `cancelAnimationFrame`
+- `async` and `await`
+
+These are just some of them and we can already see they are all implemented differently.
+Some of them, i.e. promises, are not even disposable at all.
+
+RxJS wraps all of them and provides the following API:
+- `subscribe` and `unsubscribe`
+
+This is meant by "a unified API".
+
+**Functional Composition:**
+To give an example let's combine the items of two arrays into a new one. 
+The imperative approach looks like that: 
+
+```typescript
+    const arr1 = [1,2,3], arr2 = [4,5,6];
+    let arr3 = [];
+    for (let i of arr1) {
+      arr3.push(i);
+    }
+    for (let i of arr2) {
+      arr3.push(i);
+    }
+```
+We mutate the `arr3` and push all items from `arr1` and `arr2` into `arr3` by using the `for ... of` statement.
+
+
+The functional approach looks like that:
+```typescript
+const arr1 = [1,2,3], arr2 = [4,5,6];
+const arr3 = arr1.concat(arr2);
+```
+
+Here we create a new instance on an array that is a result of the `concat` array first-class function.
+
+This is meant by "functional composition".
+
+---
+
+In the following article, we will learn 
+how to work with all the different APIs of the browser instead of the unified API of RxJS.
+We will also see how to mutate state and leverage imperative programming instead of functional composition.
 
 To elaborate with some more practical things we start with a part of Angular that provides reactivity and try to avoid it.
 
@@ -147,7 +195,7 @@ On the next change detection run, we will see the result in the view.
 
 As observables from `HttpClient` are single-shot observables we don't need care about subscription handling.
 
-### Retrieving values from an on-going observables provided by an Angular service
+### Retrieving values from on-going observables provided by an Angular service
 
 Next, let's use an on-going observable provided by Angular service, the `ActivatedRoute` service.
 
@@ -224,10 +272,10 @@ Following things happen here:
 
 On the next change detection run, we will see the latest emitted value in the view.
 
-Even if the `params` observables from `ActivatedRoute` is on-going we don't care about subscription handling here.
-Angular internally manages the Observable and it get's closed on `ngOnDestroy` of the `ActivatedRoute`.
+Even if the `params` observables from `ActivatedRoute` are on-going we don't care about subscription handling here.
+Angular internally manages the Observable and it gets closed on `ngOnDestroy` of the `ActivatedRoute`.
 
-### Retrieving values from on-going observables provided by third party libs
+### Retrieving values from on-going observables provided by third-party libs
 
 In this section, we take a look at a scenario not managed by the framework.
 For this example, I will use the `@ngrx/store` library and it's `Store` service.
@@ -325,10 +373,11 @@ Let's get a quick overview of the different options where we could subscribe.
 3. ngOnInit
 4. ngAfterContentInit
 5. ngAfterContentChecked
-6. subscription over `async` pipe in the template
-7. ngAfterViewInit
-8. ngAfterViewChecked
-9. ngOnDestroy 
+6. subscription over `async` pipe with a template binding
+7. subscription over `async` pipe with a template expression
+8. ngAfterViewInit
+9. ngAfterViewChecked
+10. ngOnDestroy 
 
 If we take another look at the above code examples we realize that we put our subscription in the constructor to avoid reactive programming.
 And we put the subscription in the template when we leveraged reactive programming.
@@ -367,7 +416,7 @@ As this is annoying or even tricky, if we forget to unsubscribe, we could create
 
 We could... But let's first look at some solutions out there.
 
-In recent times 2 people presented an automation of something that I call "binding an observable to a property", for Angular components.
+In recent times 2 people presented automation of something that I call "binding an observable to a property", for Angular components.
 Both of them created a HOC for it in a different way. (HOC is an acronym and stands for **H**igher **O**rder **C**omponents) 
 
 [@EliranEliassy](https://twitter.com/EliranEliassy) presented the "@Unsubscriber" decorator in his presentation [📼 Everything you need to know about Ivy](https://youtu.be/AKibI36WNhY?t=2117)
@@ -407,8 +456,8 @@ export class Example3ImComponent  {
 
 Now let's take a look at Mike Ryan example:
 
-Mike used inheritance as implementation approach. He also listed the various ways ou implementation in his talk, so definitely watch it!
-In addition to Elirans example here the subscription call is also invisible, which is even better!
+Mike used inheritance as an implementation approach. He also listed the various ways ou implementation in his talk, so definitely watch it!
+In addition to Eliran's example here the subscription call is also invisible, which is even better!
 
 This is also the cleanest solution I have found so far.
 
@@ -446,37 +495,14 @@ With this information, we could stop here and start avoiding reactive programmin
 
 But let's have the last section to give a bit reason for reactive programming.
 
-## Why to use reactive programming?
-
-You may wonder why Angular introduced observables. 
-Let me ask another question first, why do Angular needs observables at all?
-
-Yes, that's right, why observables at all?
-
-I mean I have to admit I understand that the `Router` is observable based, but for example `HttpClient`, as single shot observable, or other things?
-Not really, right... But there is!
-
-Unified Subscription and Composition!
-
-> **Observables are a unified interface for pull and push-based collections**
-
-Think about all the different APIs for asynchronous operations: 
-- `setInterval` and `setInterval`
-- `addEventListener` and `removeEventListener`
-- `new Promise` and `your custom dispose logic` :)
-- `requestAnimationFrame` and `cancelAnimationFrame`
-
-When you start to use them together you will see that you and up soon in a big mess.
-If you start to compose them and have them be dependent on each other hell breaks lose.
-
-As this article is on avoiding reactive programming I keep the next example short and just show one **big benefit** of observables, **composition**. 
-
-### Comparing approaches by composition 2 sources of values
+## Comparing the 2 approaches over the composition
 
 In this section, we will compose values from the `Store` with results from HTTP requests and render it in the template.
 As we want to avoid broken UI state we have to handle race-conditions. 
 Even if there is no user interaction we refresh the result every 10 seconds automatically.
 Also if the component gets destroyed while a request is pending we don't process the result anymore. 
+
+As I mentioned that it probably makes no sense to have the HTTP request as observable I will use the browsers fetch API in the imperative approach to fire the HTTP request instead of `HTTPClient`.
 
 ![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex4-store-and-http_michael-hladky.png "Comparing composition")
 
@@ -513,7 +539,7 @@ export class Example4RxComponent  {
 }
 ```
 
-Following things roughly happen here:
+Following things (roughly) happen here:
 - all values are retrieving by using the `async` pipe in the template
 - deriving the values from the `page` param from `this.store` by using the `select` method
 - deriving the HTTP result by combining the page observable with the HTTP observable
@@ -529,9 +555,8 @@ If the component gets destroyed Angular manages the subscription over the `async
 **Avoiding Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im))** 
 ```typescript
 import { Component, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import {Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'example4-im',
@@ -539,7 +564,7 @@ import {Subscription } from 'rxjs';
   <h2>Example4 - Avoid Reactive Programming</h2>
   Repositories Page [{{page}}]: 
   <ul>
-  <li *ngFor="let name of names">{{name}}</li>
+    <li *ngFor="let name of names">{{name}}</li>
   </ul>
   `
 })
@@ -549,10 +574,9 @@ export class Example4ImComponent implements OnDestroy  {
 
   intervalId;
   
-  httpSub= new Subscription();
   names;
 
-  constructor(private store: Store<any>, private http: HttpClient) {
+  constructor(private store: Store<any>) {
     this.pageSub = this.store.select(s => s.page)
       .subscribe(page => {
         this.page = page;
@@ -568,20 +592,15 @@ export class Example4ImComponent implements OnDestroy  {
     if(this.page === undefined) {
       return;
     }
-
-    if(!this.httpSub || !this.httpSub.closed) {
-      this.httpSub.unsubscribe();
-    }
      
-    this.httpSub = this.http
-      .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
-      .subscribe((res: any) => this.names =  res.map(i => i.name));
+    fetch(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
+      .then(result => result.json())
+      .then((res: any) => this.names =  res.map(i => i.name));
   }
 
   ngOnDestroy() {
     this.pageSub.unsubscribe();
     clearInterval(this.intervalId);
-    this.httpSub.unsubscribe();
   }
 }
 ```
@@ -592,61 +611,177 @@ Following things happen here:
 - we store the returned subscription from the `subscribe` call under `pageSub`
 - in the store subscription we:
   - assign the arriving value to the components `page` property
-  - we take the page value and subscribe to `http.get`
+  - we take the page value and create an HTTP `get` call by using the `fetch` API.
     - a HTTP `get` request fires
-    - we retrieve the result in subscribe function
-      - to handle race conditions we:
-        - check if a subscription is active we check the `httpSub.closed` property
-          - if it is active we close it
-          - if it is done, and the HTTP request already arrived, we do nothing
-        - we store the returned subscription from the `subscribe` call under `httpSub`
+    - we retrieve the result in `.then()` call of the returned `Promise`
+      - we convert the response to `JSON` format
+      - we assign the value to a static class property
 
-Here we have to manage the subscription in case the component gets destroyed.
+Here we have to manage the active processes in case the component gets destroyed.
 
 - when the component gets destroyed
   - we call `this.pageSub.unsubscribe()` in the `ngOnDestroy` life-cycle hook
-  - we call `this.httpSub.unsubscribe()` in the `ngOnDestroy` life-cycle hook
-
-
-As we can see there is a difference in lines of code, indentations in the process description as well as differences in the complexity and maintainability of the code. 
-IMHO the code we produce is much more expensive than the reactive approach.
-
-When I would think well the whole subscription handling is a clutter of Observables and reactive programming I could do one thing. 
-Not using it. :D
-
-Not using it and implementing the scenario **without** another **big benefit** of observables, **a unified API**. 
-
-If we compare: 
-
-the reactive approach with the following different APIs: 
-- `subscribe` and `unsubscribe`
-
-and the approach without observables with the following different APIs: 
-- `addEventListener` and `removeEventListener`
-- `new Promise` and `your custom dispose of logic`
-- `setInterval` as `clearInterval`
-
-and further, consider the **clean** implementation effort for those APIs in the race-condition scenario
-it shows us 2 things:
-- how hard it is to compose asynchronous operations
-- and the benefit of a unified API and functional composition
+  - we call `clearInterval(intervalId);` in the `ngOnDestroy` life-cycle hook
 
 ---
 
+As I nearly always code reactive in Angular projects I never think about teardown logic and I always solve race-conditions with one of the `switch` operators. 
+Therefore I forgot a tiny bit of logic made a critical mistake. **blush**
+
+I forgot to dispose the returned `Promise` from the fetch call. 
+
+Thanks to [Nicholas Jamieson](https://twitter.com/ncjamieson) that spotted the issue I also implemented a solution for the race condition of the HTTP calls.
+To solve it I used another API, the `AbortController`'s `signal` and `abort` functions. 
+
+I created a method on my component `disposableFetch` and a property `httpAbortController`. 
+The method takes the URL and a callback as a second parameter.
+It fires the request provides the signal from the created `AbortController` the the `fetch` call and passes the result to the callback function.
+Then it returns the  created `AbortController` to give others the option to dispose the fetch call.
+
+**Avoiding Reactive Programming Fixed ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im-fixed;page=0https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im-fixed)) 
+```typescript
+import { Component, OnDestroy } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+
+@Component({
+  selector: 'example4-pr',
+  template: `
+  <h2>Example4 - Use Promises</h2>
+  Repositories Page [{{page}}]: 
+  <ul>
+    <li *ngFor="let name of names">{{name}}</li>
+  </ul>
+  `
+})
+export class Example4ImFixedComponent implements OnDestroy  {
+  pageSub = new Subscription();
+  page;
+
+  intervalId;
+  
+  httpAbortController;
+  names;
+
+  constructor(private store: Store<any>) {
+    this.pageSub = this.store.select(s => s.page)
+      .subscribe(page => {
+        this.page = page;
+        this.updateList()
+    });
+    
+    this.intervalId = setInterval(() => {
+        this.updateList();
+    }, 10000);
+  }
+
+  updateList() {
+    if(this.page === undefined) {
+      return;
+    }
+
+    if(this.httpAbortController) {
+      this.httpAbortController.abort();
+      this.httpAbortController = undefined;
+    }
+
+    this.httpAbortController = this.disposableFetch(
+      `https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`, 
+      (res: any) => this.names =  res.map(i => i.name));
+  }
+
+  ngOnDestroy() {
+    this.pageSub.unsubscribe();
+    clearInterval(this.intervalId);
+    if(this.httpAbortController) {
+      this.httpAbortController.abort();
+      this.httpAbortController = undefined;
+    }
+  }
+
+  disposableFetch(url, callback): AbortController {
+    const httpController = new AbortController();
+    const httpSignal = httpController.signal;
+    
+    fetch(url, {signal: httpSignal})
+      .then(result => result.json())
+      .then(callback);
+
+    return httpController;
+  }
+
+}
+```
+Following things happen here:
+- retrieving the new state by subscribing in the constructor 
+- deriving the values from the `page` param from `this.store` by using the `select` method call subscribe
+- we store the returned subscription from the `subscribe` call under `pageSub`
+- in the store subscription we:
+  - assign the arriving value to the components `page` property
+  - we take the page value and create an HTTP `get` call over the new `disposableFetch` method`
+    - if `httpAbortController` is a `AbortController` we call `AbortController.abort()`
+      - we reset `httpAbortController` to `undefined`
+    - we create a new `AbortController` and provide its signal to the `fetch` call
+    - we use the `fetch` API again
+        - a HTTP `get` request fires
+        - we retrieve the result in `.then()` call of the returned `Promise`
+          - we convert the response to `JSON` format
+          - we assign the value to the static class property
+    - we store the `AbortController` returned by `disposableFetch` at under a component property 
+
+Here we have to manage the active processes in case the component gets destroyed.
+
+- when the component gets destroyed
+  - we call `this.pageSub.unsubscribe()` in the `ngOnDestroy` life-cycle hook
+  - we call `clearInterval(intervalId);` in the `ngOnDestroy` life-cycle hook
+  - we call `httpAbortController.abort();` in the `ngOnDestroy` life-cycle hook
+
+## My humble 5 cents
+
+I got told so many times that you have to learn `RxJS` to be able to use Angular even if it was easy for me to avoid it 
+  seemed it was not trivial for many other people. This made me create this writing. 
+ It hopefully showed that it is very easy to avoid reactive programming in Angular (even if you use reactive third party libs).
+
+Never the less I want to share my personal opinion and experience with you. 
+
+**RxJS gave me a hard time learning it**, but the code I produced with it was (mostly ;P) **more maintainable, stable and elegant** than any other.
+Especially in the front-end, it gives me a tool to model and compost complex asynchronous processes in a way that impresses me even today.
+
+If we take the above examples we see that if we don't use observables we:
+- produce more lines of code 
+- the level of complexity in the code is much higher
+- we have to put the logic for one process in multiple places
+- very hard to maintain the code
+- very hard to add features
+- Even the number of indentations in the textual process description as well way deeper 
+
+IMHO it is worth the **headache**, that you will **for sure** get if you try to learn `RxJS`
+ and even more worth the money, that the company spends on your learning.
+
 ## Summary
 
-What we learned about avoiding reactive programming and observables is:
+We used different APIs for the imperative approach:
+- `addEventListener` and `removeEventListener`
+- `new Promise` and `no dispose logic implemented`
+- `new AbortController` and `AbortController.abort` 
+- `setInterval` as `clearInterval`
+instead of the reactive (functional reactive) approach:
+- `subscribe` and `unsubscribe`
+
+And we maintained the state in a mutable instead of an immutable way.
+ 
+**Learning to avoiding reactive programming with observables:**
 - Calling **`.subscribe()`** ends reactive programming. Do it **as early as possible**!
-- Use helpers to hide away the subscription handling
+- You can use helpers to hide away the subscription handling
 - **Don't mix it!**
 - Reactive programming is **a lot of headaches** and a **steep learning curve**
-- **It pays of** if you need to **compose asynchronous processes** 
+- IMHO **It pays of** quickly if you need to **compose asynchronous processes** 
 
 ---
 
 **Resources**  
 You can find the source code of the examples   
-as well as all resources in the repository [How to Avoid Observables in Angular](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular) on github.
+as well as all resources in the repository [How to Avoid Observables in Angular](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular) on GitHub.
 
 For Ivy (Angular >= 9):
 
@@ -663,3 +798,17 @@ For ViewEngine (Angular <= 8):
 [@NetanelBasal](https://twitter.com/NetanelBasal)
 - [📦 ngx-take-until-destroy](https://github.com/ngneat/until-destroy) 
 - [📦 ngx-auto-unsubscribe](https://github.com/NetanelBasal/ngx-auto-unsubscribe)
+
+## Glossary
+- **functional programming:** Using functions and immutable state
+- **reactive programming:** A style of functional programming where we process incoming events as we would do with lists (JavaScript Arrays)
+- **imperative programming:** Using objects and mutable state
+- **single-shot observable:** As a Promise completes after the value it emitted, these observables emit a single value and then complete. 
+- **on-going observable:** like an interval fires multiple values over time these are observables that need to get completed manually.
+- **functional composition:** Therm in functional programming that is a mechanism to combine simple functions to build more complicated ones.
+- **closure:** Therm in functional programming that is a function storing a value together with another function scope.
+- **HOC:** Acronym for **H**igher **O**rder **C**omponent
+- **inheritance**: Is the mechanism of basing a class instance upon another one, to retaining similar implementation 
+- **class-level decorators**: [TypeScript Documantation](https://www.typescriptlang.org/docs/handbook/decorators.html) 
+- **broken UI state:** A inconsistency in rendered state and stored state
+- **race-condition:** Problem of asynchronous programming where two or more operations are accidentally done in the wrong sequence.
