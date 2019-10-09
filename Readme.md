@@ -20,17 +20,17 @@ This article will help us to understand how to avoid it and also, we will learn 
 
 <!-- toc -->
 
+- [TL;DR](#tldr)
 - [Minimal Information about RxJS](#minimal-information-about-rxjs)
 - [Comparing Basic Usecases](#comparing-basic-usecases)
   * [Retrieving values from single-shot observables](#retrieving-values-from-single-shot-observables)
-  * [Retrieving values from an on-going observables provided by an Angular service](#retrieving-values-from-an-on-going-observables-provided-by-an-angular-service)
-  * [Retrieving values from on-going observables provided by third party libs](#retrieving-values-from-on-going-observables-provided-by-third-party-libs)
+  * [Retrieving values from on-going observables provided by an Angular service](#retrieving-values-from-on-going-observables-provided-by-an-angular-service)
+  * [Retrieving values from on-going observables provided by third-party libs](#retrieving-values-from-on-going-observables-provided-by-third-party-libs)
 - [Patterns to avoid observables](#patterns-to-avoid-observables)
   * [Where to subscribe](#where-to-subscribe)
   * [Make it even easier](#make-it-even-easier)
-- [Why do we need in Angular at all?](#why-do-we-need-in-angular-at-all)
-  * [Comparing the 2 approaches over composition](#comparing-the-2-approaches-over-composition)
-- [My humble 5 cents](#my-humble-5-cents)
+- [Comparing the 2 approaches over the composition](#comparing-the-2-approaches-over-the-composition)
+- [My 2 cents](#my-2-cents)
 - [Summary](#summary)
 - [Glossary](#glossary)
 
@@ -50,7 +50,7 @@ should take the observable you want to get rid of, as soon as possible and do th
 
 # Minimal Information about RxJS 
 
-> **Observables are a unified API for pull and push-based collections 
+> **Observables are a unified API for pull and push-based collections   
 that can be composed in a functional way**
 
 As this sentence is maybe not trivial to understand let me split it into two pieces, unified API and functional composition. 
