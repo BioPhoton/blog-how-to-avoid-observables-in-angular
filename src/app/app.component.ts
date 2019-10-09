@@ -32,7 +32,7 @@ import { update } from './app.module';
       <a [routerLink]="['ex4-im', {page: page}]">Ex4-Im Store State + Http Request</a>
     </li>
     <li>
-      <a [routerLink]="['ex4-pr', {page: page}]">Ex4-Pr Store State + Http Request</a>
+      <a [routerLink]="['ex4-im-fixed', {page: page}]">Ex4-Im-Fixed Store State + Http Request</a>
     </li>
   </ul>
   <button (click)=update()>update</button>
