@@ -32,7 +32,7 @@ export class Example4ImFixedComponent implements OnDestroy  {
     
     this.intervalId = setInterval(() => {
         this.updateList();
-    })
+    }, 10000);
   }
 
   updateList() {
@@ -40,17 +40,14 @@ export class Example4ImFixedComponent implements OnDestroy  {
       return;
     }
 
-    if(!this.httpAbortController) {
-      this.httpAbortController.abort();
+    if(this.httpAbortController) {
+      // this.httpAbortController.abort();
       this.httpAbortController = undefined;
     }
 
     this.httpAbortController = this.disposableFetch(
       `https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`, 
-      (res: any) => {
-        this.names =  res.map(i => i.name);
-        console.log('res:' ,);
-        });
+      (res: any) => this.names =  res.map(i => i.name));
   }
 
   ngOnDestroy() {
