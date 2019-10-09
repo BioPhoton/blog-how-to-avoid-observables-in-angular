@@ -1,7 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import {Subscription } from 'rxjs';
-import * as axios from 'axios';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'example4-pr',
