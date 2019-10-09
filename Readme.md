@@ -737,8 +737,8 @@ Here we have to manage the active processes in case the component gets destroyed
 
 # My 2 cents
 
-I got told so many times that you have to learn `RxJS` to be able to use Angular even if it was easy for me to avoid it 
-  seemed it was not trivial for many other people. This made me create this writing. 
+I got told so many times that you have to learn `RxJS` to be able to use Angular.
+Even if it was easy for me to avoid it, it seemed it was not that easy for many other people. This made me create this writing. 
  It hopefully showed that it is very easy to avoid reactive programming in Angular (even if you use reactive third party libs).
 
 Never the less I want to share my personal opinion and experience with you. 
