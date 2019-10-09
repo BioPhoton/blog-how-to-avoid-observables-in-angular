@@ -8,7 +8,7 @@ import {Subscription } from 'rxjs';
   <h2>Example4 - Avoid Reactive Programming</h2>
   Repositories Page [{{page}}]: 
   <ul>
-  <li *ngFor="let name of names">{{name}}</li>
+    <li *ngFor="let name of names">{{name}}</li>
   </ul>
   `
 })

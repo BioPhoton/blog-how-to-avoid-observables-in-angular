@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import {Subscription } from 'rxjs';
 import * as axios from 'axios';
@@ -10,7 +9,7 @@ import * as axios from 'axios';
   <h2>Example4 - Use Promises</h2>
   Repositories Page [{{page}}]: 
   <ul>
-  <li *ngFor="let name of names">{{name}}</li>
+    <li *ngFor="let name of names">{{name}}</li>
   </ul>
   `
 })
@@ -23,7 +22,7 @@ export class Example4ImFixedComponent implements OnDestroy  {
   httpAbortController;
   names;
 
-  constructor(private store: Store<any>, private http: HttpClient) {
+  constructor(private store: Store<any>) {
     this.pageSub = this.store.select(s => s.page)
       .subscribe(page => {
         this.page = page;
@@ -41,7 +40,7 @@ export class Example4ImFixedComponent implements OnDestroy  {
     }
 
     if(this.httpAbortController) {
-      // this.httpAbortController.abort();
+      this.httpAbortController.abort();
       this.httpAbortController = undefined;
     }
 
@@ -53,7 +52,10 @@ export class Example4ImFixedComponent implements OnDestroy  {
   ngOnDestroy() {
     this.pageSub.unsubscribe();
     clearInterval(this.intervalId);
-    this.httpAbortController.abort();
+    if(this.httpAbortController) {
+      this.httpAbortController.abort();
+      this.httpAbortController = undefined;
+    }
   }
 
   disposableFetch(url, callback): AbortController {
