@@ -14,13 +14,13 @@ import * as axios from 'axios';
   </ul>
   `
 })
-export class Example4PrComponent implements OnDestroy  {
- pageSub = new Subscription();
+export class Example4ImFixedComponent implements OnDestroy  {
+  pageSub = new Subscription();
   page;
 
   intervalId;
   
-  httpSub = new Subscription();
+  httpAbortController;
   names;
 
   constructor(private store: Store<any>, private http: HttpClient) {
@@ -40,19 +40,34 @@ export class Example4PrComponent implements OnDestroy  {
       return;
     }
 
-    if(!this.httpSub || !this.httpSub.closed) {
-      this.httpSub.unsubscribe();
+    if(!this.httpAbortController) {
+      this.httpAbortController.abort();
+      this.httpAbortController = undefined;
     }
 
-    this.httpSub = this.http
-      .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
-      .subscribe((res: any) => this.names =  res.map(i => i.name));
+    this.httpAbortController = this.disposableFetch(
+      `https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`, 
+      (res: any) => {
+        this.names =  res.map(i => i.name);
+        console.log('res:' ,);
+        });
   }
 
   ngOnDestroy() {
     this.pageSub.unsubscribe();
     clearInterval(this.intervalId);
-    this.httpSub.unsubscribe();
+    this.httpAbortController.abort();
+  }
+
+  disposableFetch(url, callback): AbortController {
+    const httpController = new AbortController();
+    const httpSignal = httpController.signal;
+    
+    fetch(url, {signal: httpSignal})
+      .then(result => result.json())
+      .then(callback);
+
+    return httpController;
   }
 
 }

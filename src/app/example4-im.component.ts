@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import {Subscription } from 'rxjs';
 
@@ -19,10 +18,9 @@ export class Example4ImComponent implements OnDestroy  {
 
   intervalId;
   
-  httpSub= new Subscription();
   names;
 
-  constructor(private store: Store<any>, private http: HttpClient) {
+  constructor(private store: Store<any>) {
     this.pageSub = this.store.select(s => s.page)
       .subscribe(page => {
         this.page = page;
@@ -38,19 +36,14 @@ export class Example4ImComponent implements OnDestroy  {
     if(this.page === undefined) {
       return;
     }
-
-    if(!this.httpSub || !this.httpSub.closed) {
-      this.httpSub.unsubscribe();
-    }
      
-    this.httpSub = this.http
-      .get(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
-      .subscribe((res: any) => this.names =  res.map(i => i.name));
+    fetch(`https://api.github.com/orgs/ReactiveX/repos?page=${this.page}&per_page=5`)
+      .then(result => result.json())
+      .then((res: any) => this.names =  res.map(i => i.name));
   }
 
   ngOnDestroy() {
     this.pageSub.unsubscribe();
     clearInterval(this.intervalId);
-    this.httpSub.unsubscribe();
   }
 }
