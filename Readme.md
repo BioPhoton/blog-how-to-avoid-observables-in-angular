@@ -109,7 +109,7 @@ We will also see how to mutate state and leverage imperative programming instead
 
 To elaborate with some more practical things we start with a part of Angular that provides reactivity and try to avoid it.
 
-## Comparing Basic Usecases
+# Comparing Basic Usecases
 
 In this section, we will get a good overview of some of the scenarios we get in touch with reactive programming in Angular.
 
@@ -120,7 +120,7 @@ We will take a look at:
 
 And see the reactive and imperative approach in comparison.
 
-### Retrieving values from single-shot observables
+## Retrieving values from single-shot observables
 
 Let's solve a very primitive example first. 
 Retrieving data over HTTP and render it.
@@ -154,7 +154,7 @@ export class Example1RxComponent  {
 }
 ```
 
-Following things happen here:
+**Following things happen here:**
 - subscribing to `http.get` by using the `async` pipe triggers:
   - a HTTP `get` request fires
   - we retrieve the result in the pipe and render it
@@ -186,7 +186,7 @@ export class Example1ImComponent {
 }
 ```
 
-Following things happen here:
+**Following things happen here:**
 - subscribing to `http.get` in the constructor triggers:
   - a HTTP `get` request fires
   - we retrieve the result in subscribe function
@@ -195,7 +195,7 @@ On the next change detection run, we will see the result in the view.
 
 As observables from `HttpClient` are single-shot observables we don't need care about subscription handling.
 
-### Retrieving values from on-going observables provided by an Angular service
+## Retrieving values from on-going observables provided by an Angular service
 
 Next, let's use an on-going observable provided by Angular service, the `ActivatedRoute` service.
 
@@ -228,7 +228,7 @@ export class Example2RxComponent  {
 }
 ```
 
-Following things happen here:
+**Following things happen here:**
 - retrieving the new route params by using the `async` 
 - deriving the values from the `page` param from `params` with a transformation operation using the `map` operator
 - by using the `async` pipe we:
@@ -266,7 +266,7 @@ export class Example2ImComponent  {
 }
 ```
 
-Following things happen here:
+**Following things happen here:**
 - retrieving the new route params by subscribing in the constructor 
 - deriving the values from the `page` param from `params` object directly
 
@@ -275,7 +275,7 @@ On the next change detection run, we will see the latest emitted value in the vi
 Even if the `params` observables from `ActivatedRoute` are on-going we don't care about subscription handling here.
 Angular internally manages the Observable and it gets closed on `ngOnDestroy` of the `ActivatedRoute`.
 
-### Retrieving values from on-going observables provided by third-party libs
+## Retrieving values from on-going observables provided by third-party libs
 
 In this section, we take a look at a scenario not managed by the framework.
 For this example, I will use the `@ngrx/store` library and it's `Store` service.
@@ -306,7 +306,7 @@ export class Example3RxComponent  {
 }
 ```
 
-Following things happen here:
+**Following things happen here:**
 - retrieving the new state by using the `async` pipe
 - deriving the values from the `page` param from `this.store` by using the `select` method
 - by using the `async` pipe we:
@@ -345,7 +345,7 @@ export class Example3ImComponent implements OnDestroy  {
 }
 ```
 
-Following things happen here:
+**Following things happen here:**
 - retrieving the new state by subscribing in the constructor 
 - deriving the values from the `page` param from `this.store` by using the `select` method
 - we store the returned subscription from the `subscribe` call under `subscription`
@@ -357,12 +357,12 @@ Here we have to manage the subscription in case the component gets destroyed.
 - when the component gets destroyed
   - we call `this.subscription.unsubscribe()` in the `ngOnDestroy` life-cycle hook.
 
-## Patterns to avoid observables
+# Patterns to avoid observables
 
 As these examples are very simple let me summarise the learning in with a broader view.
  
 
-### Where to subscribe
+## Where to subscribe
 
 We saw that we subscribe to observables in different places.
 
@@ -406,8 +406,7 @@ So as a suggestion from my side tries to avoid mixing stales as good as possible
 
 ![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/mix-styles_michael-hladky.png "Mixing Styles")
 
-
-### Make it even easier
+## Make it even easier
 
 We realized that there is a bit of boilerplate to write to get the values out of the observable.
 In some cases, we also need to manage the subscription according to the component's lifetime.
@@ -495,7 +494,7 @@ With this information, we could stop here and start avoiding reactive programmin
 
 But let's have the last section to give a bit reason for reactive programming.
 
-## Comparing the 2 approaches over the composition
+# Comparing the 2 approaches over the composition
 
 In this section, we will compose values from the `Store` with results from HTTP requests and render it in the template.
 As we want to avoid broken UI state we have to handle race-conditions. 
@@ -605,7 +604,7 @@ export class Example4ImComponent implements OnDestroy  {
 }
 ```
 
-Following things happen here:
+**Following things happen here:**
 - retrieving the new state by subscribing in the constructor 
 - deriving the values from the `page` param from `this.store` by using the `select` method call subscribe
 - we store the returned subscription from the `subscribe` call under `pageSub`
@@ -638,7 +637,7 @@ The method takes the URL and a callback as a second parameter.
 It fires the request provides the signal from the created `AbortController` the the `fetch` call and passes the result to the callback function.
 Then it returns the  created `AbortController` to give others the option to dispose the fetch call.
 
-**Avoiding Reactive Programming Fixed ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im-fixed;page=0https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im-fixed)) 
+**Avoiding Reactive Programming Fixed ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im-fixed;page=0https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-im-fixed))** 
 ```typescript
 import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -712,7 +711,7 @@ export class Example4ImFixedComponent implements OnDestroy  {
 
 }
 ```
-Following things happen here:
+**Following things happen here:**
 - retrieving the new state by subscribing in the constructor 
 - deriving the values from the `page` param from `this.store` by using the `select` method call subscribe
 - we store the returned subscription from the `subscribe` call under `pageSub`
@@ -736,7 +735,7 @@ Here we have to manage the active processes in case the component gets destroyed
   - we call `clearInterval(intervalId);` in the `ngOnDestroy` life-cycle hook
   - we call `httpAbortController.abort();` in the `ngOnDestroy` life-cycle hook
 
-## My humble 5 cents
+# My 2 cents
 
 I got told so many times that you have to learn `RxJS` to be able to use Angular even if it was easy for me to avoid it 
   seemed it was not trivial for many other people. This made me create this writing. 
@@ -758,7 +757,7 @@ If we take the above examples we see that if we don't use observables we:
 IMHO it is worth the **headache**, that you will **for sure** get if you try to learn `RxJS`
  and even more worth the money, that the company spends on your learning.
 
-## Summary
+# Summary
 
 We used different APIs for the imperative approach:
 - `addEventListener` and `removeEventListener`
@@ -799,7 +798,7 @@ For ViewEngine (Angular <= 8):
 - [📦 ngx-take-until-destroy](https://github.com/ngneat/until-destroy) 
 - [📦 ngx-auto-unsubscribe](https://github.com/NetanelBasal/ngx-auto-unsubscribe)
 
-## Glossary
+# Glossary
 - **functional programming:** Using functions and immutable state
 - **reactive programming:** A style of functional programming where we process incoming events as we would do with lists (JavaScript Arrays)
 - **imperative programming:** Using objects and mutable state
