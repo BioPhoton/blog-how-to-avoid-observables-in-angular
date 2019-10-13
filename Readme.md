@@ -1,4 +1,4 @@
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/cover-how-to-avoid-observables-in-angular_michael-hladky.png "How to Avoid Observables in Angular - Cover")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/cover-how-to-avoid-observables-in-angular__michael-hladky.png "How to Avoid Observables in Angular - Cover")
 
 # How to Avoid Observables in Angular
 
@@ -14,7 +14,7 @@ This article will help us to understand how to avoid it and also, we will learn 
 
 ---
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-observables-intro_michael-hladky.png "How to Avoid Observables in Angular - Intro")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-observables-intro__michael-hladky.png "How to Avoid Observables in Angular - Intro")
 
 # Table of Content
 
@@ -45,7 +45,7 @@ should take the observable you want to get rid of, as soon as possible and do th
 - subscribe to a stream and assign incoming values to a component property 
 - if necessary, unsubscribe the stream as soon as the component gets destroyed 
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/subscription-time-avoid-observables_michael-hladky.png "How to Avoid Observables in Angular - TL;DR")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/subscription-time-avoid-observables__michael-hladky.png "How to Avoid Observables in Angular - TL;DR")
 
 
 # Minimal Information about RxJS 
@@ -125,7 +125,7 @@ And see the reactive and imperative approach in comparison.
 Let's solve a very primitive example first. 
 Retrieving data over HTTP and render it.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex1-http_michael-hladky.png "Retrieving values from cold observables")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex1-http__michael-hladky.png "Retrieving values from cold observables")
 
 
 We start with the reactive approach and then try to convert it into an imperative approach.
@@ -201,7 +201,7 @@ Next, let's use an on-going observable provided by Angular service, the `Activat
 
 Let's retrieve the route params, plucking out a single key and displaying its value in the view.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex2-router-params_michael-hladky.png "Retrieving values from on-going observables provided by Angular")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex2-router-params__michael-hladky.png "Retrieving values from on-going observables provided by Angular")
 
 Again we start with the reactive approach first.
 
@@ -282,7 +282,7 @@ For this example, I will use the `@ngrx/store` library and it's `Store` service.
 
 Retrieving state from the store and display its value in the view.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex3-store_michael-hladky.png "Retrieving values from on-going observables provided by third parties")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex3-store__michael-hladky.png "Retrieving values from on-going observables provided by third parties")
 
 **Leveraging Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex3-rx))** 
 ```typescript
@@ -391,7 +391,7 @@ It's the moment we start to mutate the properties of a component in an imperativ
 So the worst thing you could do to avoid reactive programming is to use the `async` pipe.
 Let me give you a quick illustration of this learning:
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-leverage-observables_michael-hladky.png "Avoid Reactive Programming")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/avoid-leverage-observables__michael-hladky.png "Avoid Reactive Programming")
 
 We learned the following: 
 - If we want to **avoid** reactive programming we have to 
@@ -404,7 +404,7 @@ Until now I saw plenty of them and It was always a mess.
 
 So as a suggestion from my side tries to avoid mixing stales as good as possible.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/mix-styles_michael-hladky.png "Mixing Styles")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/mix-styles__michael-hladky.png "Mixing Styles")
 
 ## Make it even easier
 
@@ -503,7 +503,7 @@ Also if the component gets destroyed while a request is pending we don't process
 
 As I mentioned that it probably makes no sense to have the HTTP request as observable I will use the browsers fetch API in the imperative approach to fire the HTTP request instead of `HTTPClient`.
 
-![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex4-store-and-http_michael-hladky.png "Comparing composition")
+![](https://github.com/BioPhoton/blog-how-to-avoid-observables-in-angular/raw/master/images/ex4-store-and-http__michael-hladky.png "Comparing composition")
 
 **Leveraging Reactive Programming ([🎮 demo](https://blog-how-to-avoid-observables-in-angular.stackblitz.io/ex4-rx))** 
 ```typescript
@@ -624,12 +624,12 @@ Here we have to manage the active processes in case the component gets destroyed
 
 ---
 
-As I nearly always code reactive in Angular projects I never think about teardown logic and I always solve race-conditions with one of the `switch` operators. 
+As I nearly always code reactive in Angular projects I never think about teardown logic. 
 Therefore I forgot a tiny bit of logic made a critical mistake. **blush**
 
-I forgot to dispose the returned `Promise` from the fetch call. 
+I forgot to dispose the returned `Promise` from the fetch call, and therefore I didn't handle race conditions and we have a bug in our code.
 
-Thanks to [Nicholas Jamieson](https://twitter.com/ncjamieson) that spotted the issue I also implemented a solution for the race condition of the HTTP calls.
+So I also implemented a solution for the race condition of the HTTP calls.
 To solve it I used another API, the `AbortController`'s `signal` and `abort` functions. 
 
 I created a method on my component `disposableFetch` and a property `httpAbortController`. 
