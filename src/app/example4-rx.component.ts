@@ -15,10 +15,10 @@ import { Store } from '@ngrx/store';
   `
 })
 export class Example4RxComponent  {
+
   page = this.store.select(s => s.page);
-  names = merge(this.page, interval(10000))
+  names = merge(this.page, interval(10000).pipe(withLatestFrom(this.page, (_, page) => page)))
       .pipe(
-        withLatestFrom(this.page, (_, page) => page),
         switchMap(page => this.http.get(`https://api.github.com/orgs/ReactiveX/repos?page=${page}&per_page=5`)),
         map(res => res.map(i => i.name))
       );
